@@ -103,6 +103,12 @@ function Index() {
     0,
   );
 
+  const allPayments = items
+    .flatMap((i) =>
+      i.payments.map((p) => ({ concept: i.name, amount: p.amount, date: p.date })),
+    )
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const parsed = parseFloat(amount);
@@ -411,6 +417,33 @@ function Index() {
             );
           })}
         </div>
+
+        {/* Historial general de pagos */}
+        {allPayments.length > 0 && (
+          <div className="mt-6 rounded-[10px] border border-border bg-card p-4 shadow-sm">
+            <h3 className="mb-3 mt-0 text-base font-semibold">
+              Historial de Pagos
+            </h3>
+            <div className="flex flex-col divide-y divide-border">
+              {allPayments.map((p, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between gap-2 py-2"
+                >
+                  <div>
+                    <p className="m-0 text-sm font-semibold">{p.concept}</p>
+                    <p className="m-0 text-xs text-muted-foreground">
+                      {formatDate(p.date)}
+                    </p>
+                  </div>
+                  <span className="text-sm font-bold text-success">
+                    +{formatCurrency(p.amount)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
